@@ -28,7 +28,7 @@ class Wordle:
                 print("Word must be 5 characters long")
             # TODO: check non ASCII chars
             else:
-                if (self.guess(guess)):
+                if self.guess(guess):
                     self._visualize_state(self.state, guess)
                 if self.over:
                     print("Game over, you ", "won!" if self.won else "lost!")
@@ -73,7 +73,7 @@ class Wordle:
                     for n in range(len(word)):
                         other_positions_offset = 1 + (n * 26 * 3)
                         self.state[other_positions_offset + char_offset:
-                                   other_positions_offset + char_offset + 3] = [1,0,0]
+                                   other_positions_offset + char_offset + 3] = [1, 0, 0]
 
             solution_char_count[char] -= 1
         return self.state, reward

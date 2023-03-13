@@ -2,6 +2,9 @@
 import random
 import numpy as np
 from collections import deque
+
+import torch
+
 from wordle import Wordle
 from model import Linear_QNet, QTrainer
 
@@ -12,13 +15,13 @@ LEARNING_RATE = 0.001
 
 
 class Agent:
-    def __init__(self):
+    def __init__(self, action_space_len):
         self.n_games = 0
-        self.gamma = 0.9  # TODO: what is this??
+        self.gamma = .9  # TODO: what is this??
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
         self.model = Linear_QNet(input_size=391,
                                  hidden_size=256,
-                                 output_size=130)
+                                 output_size=action_space_len)
         self.trainer = QTrainer(self.model,
                                 learning_rate=LEARNING_RATE,
                                 gamma=self.gamma)
@@ -37,6 +40,11 @@ class Agent:
     def train_short_memory(self, state, action, reward, next_state, won):
         self.trainer.train_step(state, action, reward, next_state, won)
 
+    def get_predictor(self, state):
+        # only exploitation no exploration so far
+        state0 = torch.tensor(state, dtype=torch.float)
+        return self.model(state0)
+
 
 def word_one_hot(word):
     """one hot encode a word for each of the 26 letters at each of the 5 position"""
@@ -48,8 +56,8 @@ def word_one_hot(word):
 
 def train():
     total_games = 0
-    won_games = 0
-    agent = Agent()
+    wins = 0
+    max_wins = 0
     vocab = []
     vocab_one_hot_matrix = np.zeros((len(vocab), 130))
     with open("data/possible_words.txt") as word_list:
@@ -58,10 +66,11 @@ def train():
             vocab_one_hot_matrix[i] = word_one_hot(word)
     solution = ""  # TODO: random or hardcoded solution
     game = Wordle(vocab, MAX_ROUNDS, solution)
+    agent = Agent(action_space_len=len(vocab))
     while True:
         state_old = game.state
-        prediction_probabilities = np.dot(vocab_one_hot_matrix, state_old)
-        word = random.choices(vocab, prediction_probabilities)
+        predicted_probabilities = agent.get_predictor(state_old)
+        word = random.choices(vocab, predicted_probabilities)
         state_new, reward = game.set_state(word)
 
         agent.train_short_memory(state_old, word, reward, state_new, game.won)
@@ -71,11 +80,14 @@ def train():
             total_games += 1
             agent.train_long_memory()
             if game.won:
-                won_games += 1
+                wins += 1
             if (total_games % 1000) == 0:
                 print("Played: {} Won:{} of the last 1000".format(
-                    total_games, won_games))
-                won_games = 0
+                    total_games, wins))
+                if wins > max_wins:
+                    max_wins = wins
+                    agent.model.save()
+                wins = 0
             game = Wordle(vocab, MAX_ROUNDS, solution)
 
 
