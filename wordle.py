@@ -38,10 +38,10 @@ class Wordle:
         reward = 0
         if word == self.solution:
             self.won = True
-            reward += 100 * (self.max_rounds - self.round + 1)
+            reward += 50 * (self.max_rounds - self.round + 1)
             self.over = True
         elif self.round == self.max_rounds:
-            reward = -100
+            reward = -50
             self.over = True
 
         solution_char_count = collections.Counter(self.solution)
@@ -58,7 +58,7 @@ class Wordle:
                     # character exists in solution and has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
-                    reward += 1
+                    reward += 2
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists

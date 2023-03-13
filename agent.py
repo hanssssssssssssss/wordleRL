@@ -46,7 +46,6 @@ class Agent:
         if random.randint(0, self.epsilon) < (self.epsilon - self.n_games):
             prediction_index = random.randint(0, self.action_space_len - 1)
         else:
-            # only exploitation no exploration so far
             state0 = torch.tensor(state, dtype=torch.float)
             predicted_probabilities = self.model(state0)
             prediction_index = torch.argmax(predicted_probabilities).item()
@@ -65,7 +64,7 @@ def train(vocab_subset_len=None, random_seed=None):
     solution = random.choice(vocab)
     game = Wordle(vocab, MAX_ROUNDS, solution)
     agent = Agent(gamma=.9,
-                  epsilon=100,
+                  epsilon=1000,
                   action_space_len=len(vocab))
 
     while True:
