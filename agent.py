@@ -43,7 +43,9 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_prediction_index(self, state):
+        random.seed(None)
         if random.randint(0, self.epsilon) < (self.epsilon - self.n_games):
+            random.seed(None)
             prediction_index = random.randint(0, self.action_space_len - 1)
         else:
             state0 = torch.tensor(state, dtype=torch.float)
