@@ -15,9 +15,11 @@ LEARNING_RATE = 0.001
 
 
 class Agent:
-    def __init__(self, action_space_len):
+    def __init__(self, action_space_len, gamma, epsilon):
         self.n_games = 0
-        self.gamma = .9  # TODO: what is this??
+        self.action_space_len = action_space_len
+        self.gamma = gamma  # TODO: what is this??
+        self.epsilon = epsilon
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
         self.model = Linear_QNet(input_size=391,
                                  hidden_size=256,
@@ -40,10 +42,15 @@ class Agent:
     def train_short_memory(self, state, action, reward, next_state, won):
         self.trainer.train_step(state, action, reward, next_state, won)
 
-    def get_predictor(self, state):
-        # only exploitation no exploration so far
-        state0 = torch.tensor(state, dtype=torch.float)
-        return self.model(state0)
+    def get_prediction_index(self, state):
+        if random.randint(0, self.epsilon) < (self.epsilon - self.n_games):
+            prediction_index = random.randint(0, self.action_space_len)
+        else:
+            # only exploitation no exploration so far
+            state0 = torch.tensor(state, dtype=torch.float)
+            predicted_probabilities = self.model(state0)
+            prediction_index = torch.argmax(predicted_probabilities).item()
+        return prediction_index
 
 
 def word_one_hot(word):
@@ -54,23 +61,25 @@ def word_one_hot(word):
     return encoding
 
 
-def train():
+def train(random_seed=None, vocab_subset_len=None):
     total_games = 0
     wins = 0
     max_wins = 0
-    vocab = []
-    vocab_one_hot_matrix = np.zeros((len(vocab), 130))
     with open("data/possible_words.txt") as word_list:
-        for i, word in enumerate(word_list):
-            vocab.append(word)
-            vocab_one_hot_matrix[i] = word_one_hot(word)
-    solution = ""  # TODO: random or hardcoded solution
+        vocab = word_list.readlines()
+    if vocab_subset_len:
+        random.seed(random_seed)
+        vocab = random.sample(vocab, vocab_subset_len)
+    random.seed(random_seed)
+    solution = random.choice(vocab)
     game = Wordle(vocab, MAX_ROUNDS, solution)
-    agent = Agent(action_space_len=len(vocab))
+    agent = Agent(gamma=.9,
+                  epsilon=100,
+                  action_space_len=len(vocab))
     while True:
         state_old = game.state
-        predicted_probabilities = agent.get_predictor(state_old)
-        word = random.choices(vocab, predicted_probabilities)
+        prediction_index = agent.get_prediction_index(state_old)
+        word = vocab[prediction_index]
         state_new, reward = game.set_state(word)
 
         agent.train_short_memory(state_old, word, reward, state_new, game.won)
@@ -91,6 +100,6 @@ def train():
             game = Wordle(vocab, MAX_ROUNDS, solution)
 
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
     train()
-    
+"""
