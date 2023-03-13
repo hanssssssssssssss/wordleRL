@@ -32,7 +32,7 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)  # TODO: what does this mean?
         self.criterion = nn.MSELoss()  # TODO why mean squared loss?
 
-    def train_step(self, state, action, reward, next_state, won):
+    def train_step(self, state, action, reward, next_state, done):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
@@ -43,9 +43,18 @@ class QTrainer:
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
-            won = (won, )
+            done = (done, )
 
         # TODO: Check out Bellman equation for updating Q
         # Q(state0) = model.predict(state0)
         # Q(new) = reward + gamma*max(Q(state1))
         prediction = self.model(state)
+        target = prediction.clone()
+        for i in range(len(done)):
+            Q_new = reward[i]
+            if not done[i]:
+                Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
+            target[i][torch.argmax(action[i]).item()] = Q_new
+        self.optimizer.zero_grad()
+        loss = self.criterion(target, prediction)
+        loss.backward()

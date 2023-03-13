@@ -28,19 +28,19 @@ class Agent:
                                 learning_rate=LEARNING_RATE,
                                 gamma=self.gamma)
 
-    def remember(self, state, action, reward, next_state, won):
-        self.memory.append((state, action, reward, next_state, won))
+    def remember(self, state, action, reward, next_state, done):
+        self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
             mini_sample = random.sample(self.memory, BATCH_SIZE)
         else:
             mini_sample = self.memory
-        states, actions, rewards, next_states, wons = zip(*mini_sample)
-        self.trainer.train_step(states, actions, rewards, next_states, wons)
+        states, actions, rewards, next_states, dones = zip(*mini_sample)
+        self.trainer.train_step(states, actions, rewards, next_states, dones)
 
-    def train_short_memory(self, state, action, reward, next_state, won):
-        self.trainer.train_step(state, action, reward, next_state, won)
+    def train_short_memory(self, state, action, reward, next_state, done):
+        self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_prediction_index(self, state):
         if random.randint(0, self.epsilon) < (self.epsilon - self.n_games):
@@ -57,6 +57,7 @@ def word_one_hot(word):
     """one hot encode a word for each of the 26 letters at each of the 5 position"""
     encoding = np.zeros(26 * 5)
     for i, letter in enumerate(word):
+        encoding[i * 26 + (ord(letter) - 97)] = 1
         encoding[i * 26 + (ord(letter) - 97)] = 1
     return encoding
 
@@ -82,8 +83,8 @@ def train(random_seed=None, vocab_subset_len=None):
         word = vocab[prediction_index]
         state_new, reward = game.set_state(word)
 
-        agent.train_short_memory(state_old, word, reward, state_new, game.won)
-        agent.remember(state_old, word, reward, state_new, game.won)
+        agent.train_short_memory(state_old, word, reward, state_new, game.over)
+        agent.remember(state_old, word, reward, state_new, game.over)
 
         if game.over:
             total_games += 1
@@ -100,6 +101,5 @@ def train(random_seed=None, vocab_subset_len=None):
             game = Wordle(vocab, MAX_ROUNDS, solution)
 
 
-"""if __name__ == '__main__':
+if __name__ == '__main__':
     train()
-"""
