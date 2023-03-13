@@ -95,6 +95,7 @@ def train(vocab_subset_len=None, random_seed=None):
             solution = random.choice(vocab)
             game = Wordle(vocab, MAX_ROUNDS, solution)
 
+
 if __name__ == '__main__':
     train(vocab_subset_len=int(sys.argv[1]) if len(sys.argv) > 1 else None,
           random_seed=int(sys.argv[2]) if len(sys.argv) > 2 else None)

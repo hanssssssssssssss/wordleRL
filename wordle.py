@@ -1,6 +1,4 @@
 import collections
-from IPython import display
-from IPython.display import HTML as html_print
 import numpy as np
 
 
@@ -40,10 +38,10 @@ class Wordle:
         reward = 0
         if word == self.solution:
             self.won = True
-            reward += 50 * (self.max_rounds - self.round + 1)
+            reward += 100 * (self.max_rounds - self.round + 1)
             self.over = True
         elif self.round == self.max_rounds:
-            reward = -50
+            reward = -100
             self.over = True
 
         solution_char_count = collections.Counter(self.solution)
@@ -55,12 +53,12 @@ class Wordle:
                     # Character is correct at this position
                     # Set "definitely" on this position (and reset "maybe")
                     self.state[position_offset + char_offset:position_offset + char_offset + 3] = [0, 0, 1]
-                    reward += 10
+                    reward += 5
                 else:
                     # character exists in solution and has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
-                    reward += 2
+                    reward += 1
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists
@@ -80,20 +78,3 @@ class Wordle:
             solution_char_count[char] -= 1
         self.round += 1
         return self.state, reward
-
-    def _html_colored(self, text, color="black"):
-        return "<text style=background-color:{};font-size:large>{}</text>".format(color, text)
-
-    def _visualize_state(self, state, word):
-        colors = np.array(["lightgrey", "yellow", "lightgreen"])
-        visual = []
-        for i, char in enumerate(word):
-            position_offset = i * 26 * 3
-            char_offset = (ord(char) - 97) * 3
-            position_state = state[position_offset + char_offset:position_offset + char_offset + 3]
-            if np.array_equal(position_state, np.zeros(3)):
-                color = None
-            else:
-                color = colors[position_state == 1][0]
-            visual.append(self._html_colored(char, color))
-        display(html_print("".join(visual)))
