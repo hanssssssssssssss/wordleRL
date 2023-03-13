@@ -68,9 +68,6 @@ def train(vocab_subset_len=None, random_seed=None):
                   epsilon=100,
                   action_space_len=len(vocab))
 
-    print(vocab)
-    print(solution)
-
     while True:
         state_old = game.state
         prediction_index = agent.get_prediction_index(state_old)
@@ -94,6 +91,8 @@ def train(vocab_subset_len=None, random_seed=None):
                     max_wins = recent_wins
                     agent.model.save()
                 recent_wins = 0
+            random.seed(random_seed)
+            solution = random.choice(vocab)
             game = Wordle(vocab, MAX_ROUNDS, solution)
 
 if __name__ == '__main__':
