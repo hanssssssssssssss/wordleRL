@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,7 +8,7 @@ import torch.nn.functional as F
 
 
 class Linear_QNet(nn.Module):
-    def __int__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
@@ -33,9 +35,9 @@ class QTrainer:
         self.criterion = nn.MSELoss()  # TODO why mean squared loss?
 
     def train_step(self, state, action, reward, next_state, done):
-        state = torch.tensor(state, dtype=torch.float)
-        next_state = torch.tensor(next_state, dtype=torch.float)
-        action = torch.tensor(action, dtype=torch.long)
+        state = torch.tensor(np.array(state), dtype=torch.float)
+        next_state = torch.tensor(np.array(next_state), dtype=torch.float)
+        action = torch.tensor(action, dtype=torch.int)
         reward = torch.tensor(reward, dtype=torch.float)
 
         if len(state.shape) == 1:
@@ -52,9 +54,9 @@ class QTrainer:
         target = prediction.clone()
         for i in range(len(done)):
             Q_new = reward[i]
-            if not done[i]:
+            if not done:
                 Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
-            target[i][torch.argmax(action[i]).item()] = Q_new
+            target[i][action[i].item()] = Q_new
         self.optimizer.zero_grad()
         loss = self.criterion(target, prediction)
         loss.backward()
