@@ -60,3 +60,4 @@ class QTrainer:
         self.optimizer.zero_grad()
         loss = self.criterion(target, prediction)
         loss.backward()
+        self.optimizer.step()

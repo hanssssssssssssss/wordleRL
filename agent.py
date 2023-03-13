@@ -16,6 +16,7 @@ LEARNING_RATE = 0.001
 class Agent:
     def __init__(self, action_space_len, gamma, epsilon):
         self.n_games = 0
+        self.n_wins = 0
         self.action_space_len = action_space_len
         self.gamma = gamma  # TODO: what is this??
         self.epsilon = epsilon
@@ -53,8 +54,6 @@ class Agent:
 
 
 def train(vocab_subset_len=None, random_seed=None):
-    total_games = 0
-    total_wins = 0
     recent_wins = 0
     max_wins = 0
     with open("data/possible_words.txt") as word_list:
@@ -81,16 +80,16 @@ def train(vocab_subset_len=None, random_seed=None):
         agent.train_short_memory(state_old, prediction_index, reward, state_new, game.over)
 
         if game.over:
-            total_games += 1
+            agent.n_games += 1
             if len(agent.memory) > 0:
                 agent.train_long_memory()
             if game.won:
                 recent_wins += 1
-                total_wins += 1
+                agent.n_wins += 1
                 agent.remember(state_old, prediction_index, reward, state_new, game.over)
-            if (total_games % 100) == 0:
+            if (agent.n_games % 100) == 0:
                 print("Played: {} Recently won: {}/100 Total win rate: {} ".format(
-                    total_games, recent_wins, total_wins/total_games))
+                    agent.n_games, recent_wins, agent.n_wins/agent.n_games))
                 if recent_wins > max_wins:
                     max_wins = recent_wins
                     agent.model.save()
