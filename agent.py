@@ -3,7 +3,7 @@ import random
 import numpy as np
 from collections import deque
 from wordle import Wordle
-# from model import Linear_QNet, QTrainer
+from model import Linear_QNet, QTrainer
 
 MAX_ROUNDS = 6
 MAX_MEMORY = 100_000
@@ -14,10 +14,14 @@ LEARNING_RATE = 0.001
 class Agent:
     def __init__(self):
         self.n_games = 0
-        self.gamma = 0.9  # discount rate
+        self.gamma = 0.9  # TODO: what is this??
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
-        self.model = None
-        self.trainer = None
+        self.model = Linear_QNet(input_size=391,
+                                 hidden_size=256,
+                                 output_size=130)
+        self.trainer = QTrainer(self.model,
+                                learning_rate=LEARNING_RATE,
+                                gamma=self.gamma)
 
     def remember(self, state, action, reward, next_state, won):
         self.memory.append((state, action, reward, next_state, won))
