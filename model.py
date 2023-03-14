@@ -3,21 +3,22 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 
 
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
-        self.linearIn = nn.Linear(input_size, hidden_size)
-        #self.linearHidden = nn.Linear(hidden_size, hidden_size)
-        self.linearOut= nn.Linear(hidden_size, output_size)
+        self.f0 = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, output_size),
+            nn.Softmax(dim=-1),
+        )
 
     def forward(self, x):
-        x = F.relu(self.linearIn(x))
-        #x = F.relu(self.linearHidden(x))
-        x = self.linearOut(x)
-        return x
+        return self.f0(x.float())
 
     def save(self, file_name='model.pth'):
         model_folder_path = './model'
@@ -26,13 +27,19 @@ class Linear_QNet(nn.Module):
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
 
+    def load(self, path):
+        self.load_state_dict(torch.load(path))
+        self.eval()
+
 
 class QTrainer:
-    def __init__(self, model, learning_rate, gamma):
+    def __init__(self, model, learning_rate, gamma, decay):
         self.learning_rate = learning_rate
         self.gamma = gamma
         self.model = model
-        self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)  # TODO: what does this mean?
+        self.optimizer = optim.Adam(model.parameters(),
+                                    lr=self.learning_rate,
+                                    weight_decay=decay)  # TODO: what does this mean?
         self.criterion = nn.MSELoss()  # TODO why mean squared loss?
 
     def train_step(self, state, action, reward, next_state, done):

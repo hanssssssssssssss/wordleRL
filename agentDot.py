@@ -5,7 +5,7 @@ from pprint import pprint
 from collections import deque, Counter
 import torch
 from wordle import Wordle
-from modelSoftmax import Linear_QNet, QTrainer
+from modelDot import Linear_QNet, QTrainer
 
 MAX_ROUNDS = 6
 MAX_MEMORY = 100_000
@@ -17,16 +17,17 @@ WEIGHT_DECAY = .0001
 
 
 class Agent:
-    def __init__(self, action_space_len, gamma, epsilon):
+    def __init__(self, gamma, epsilon, vocab):
         self.n_games = 0
         self.n_wins = 0
-        self.action_space_len = action_space_len
+        self.action_space_len = len(vocab)
         self.gamma = gamma  # TODO: what is this??
         self.epsilon = epsilon
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
         self.model = Linear_QNet(input_size=390,
                                  hidden_size=256,
-                                 output_size=action_space_len)
+                                 output_size=130,
+                                 vocab=vocab)
         self.trainer = QTrainer(self.model,
                                 learning_rate=LEARNING_RATE,
                                 gamma=self.gamma,
@@ -84,7 +85,7 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
     game = Wordle(vocab, MAX_ROUNDS, solution)
     agent = Agent(gamma=GAMMA,
                   epsilon=EPSILON,
-                  action_space_len=len(vocab))
+                  vocab=vocab)
     if saved_model_path:
         agent.model.load(saved_model_path)
 
