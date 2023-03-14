@@ -1,9 +1,9 @@
 import sys
+import signal
 import random
-from collections import deque
-
+from pprint import pprint
+from collections import deque, Counter
 import torch
-
 from wordle import Wordle
 from modelSoftmax import Linear_QNet, QTrainer
 
@@ -51,12 +51,12 @@ class Agent:
             state0 = torch.tensor(state, dtype=torch.float)
             predicted_probabilities = self.model(state0)
             prediction_index = random.choices(range(len(predicted_probabilities)),
-            weights=predicted_probabilities)[0]
+                                              weights=predicted_probabilities)[0]
             # torch.argmax(predicted_probabilities).item()
         return prediction_index
 
 
-def train(vocab_subset_len=None, random_seed=None):
+def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
     recent_wins = 0
     max_wins = 0
     with open("data/possible_words.txt") as word_list:
@@ -66,17 +66,26 @@ def train(vocab_subset_len=None, random_seed=None):
         vocab = random.sample(vocab, k=vocab_subset_len)
     random.seed(random_seed)
     solution = random.choice(vocab)
+    guessed_words_counter = Counter(vocab)
+
+    def keyboard_interrupt(sig, frame):
+        pprint(guessed_words_counter)
+        sys.exit(0)
+    signal.signal(signal.SIGINT, keyboard_interrupt)
+
     game = Wordle(vocab, MAX_ROUNDS, solution)
     agent = Agent(gamma=.9,
                   epsilon=1000,
                   action_space_len=len(vocab))
+    if saved_model_path:
+        agent.model.load(saved_model_path)
 
     while True:
         state_old = game.state
         prediction_index = agent.get_prediction_index(state_old)
         word = vocab[prediction_index]
+        guessed_words_counter[word] += 1
         state_new, reward = game.set_state(word)
-        #print("{}({})->{} round:{} reward:{}".format(word, prediction_index, game.solution, game.round, reward))
         agent.train_short_memory(state_old, prediction_index, reward, state_new, game.over)
 
         if game.over:
@@ -95,10 +104,10 @@ def train(vocab_subset_len=None, random_seed=None):
                     agent.model.save()
                 recent_wins = 0
             random.seed(random_seed)
-            solution = random.choice(vocab)
-            game = Wordle(vocab, MAX_ROUNDS, solution)
+            game = Wordle(vocab, MAX_ROUNDS, random.choice(vocab))
 
 
 if __name__ == '__main__':
     train(vocab_subset_len=int(sys.argv[1]) if len(sys.argv) > 1 else None,
-          random_seed=int(sys.argv[2]) if len(sys.argv) > 2 else None)
+          random_seed=int(sys.argv[2]) if len(sys.argv) > 2 else None,
+          saved_model_path="model/model_0390.pth")

@@ -29,8 +29,8 @@ class Linear_QNet(nn.Module):
         torch.save(self.state_dict(), file_name)
 
     def load(self, path):
-        pass
-
+        self.load_state_dict(torch.load(path))
+        self.eval()
 
 class QTrainer:
     def __init__(self, model, learning_rate, gamma):
