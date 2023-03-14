@@ -3,7 +3,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 
 
 class Linear_QNet(nn.Module):
@@ -32,12 +31,15 @@ class Linear_QNet(nn.Module):
         self.load_state_dict(torch.load(path))
         self.eval()
 
+
 class QTrainer:
-    def __init__(self, model, learning_rate, gamma):
+    def __init__(self, model, learning_rate, gamma, decay):
         self.learning_rate = learning_rate
         self.gamma = gamma
         self.model = model
-        self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)  # TODO: what does this mean?
+        self.optimizer = optim.Adam(model.parameters(),
+                                    lr=self.learning_rate,
+                                    weight_decay=decay)  # TODO: what does this mean?
         self.criterion = nn.MSELoss()  # TODO why mean squared loss?
 
     def train_step(self, state, action, reward, next_state, done):

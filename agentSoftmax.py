@@ -10,7 +10,10 @@ from modelSoftmax import Linear_QNet, QTrainer
 MAX_ROUNDS = 6
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
-LEARNING_RATE = 0.001
+LEARNING_RATE = .001
+GAMMA = .9
+EPSILON = 1000
+WEIGHT_DECAY = .0001
 
 
 class Agent:
@@ -26,7 +29,8 @@ class Agent:
                                  output_size=action_space_len)
         self.trainer = QTrainer(self.model,
                                 learning_rate=LEARNING_RATE,
-                                gamma=self.gamma)
+                                gamma=self.gamma,
+                                decay=WEIGHT_DECAY)
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -67,15 +71,19 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
     random.seed(random_seed)
     solution = random.choice(vocab)
     guessed_words_counter = Counter(vocab)
+    winners_counter = Counter(vocab)
 
     def keyboard_interrupt(sig, frame):
+        print("Guesses:")
         pprint(guessed_words_counter)
+        print("Solved:")
+        pprint(winners_counter)
         sys.exit(0)
     signal.signal(signal.SIGINT, keyboard_interrupt)
 
     game = Wordle(vocab, MAX_ROUNDS, solution)
-    agent = Agent(gamma=.9,
-                  epsilon=1000,
+    agent = Agent(gamma=GAMMA,
+                  epsilon=EPSILON,
                   action_space_len=len(vocab))
     if saved_model_path:
         agent.model.load(saved_model_path)
@@ -86,7 +94,8 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         word = vocab[prediction_index]
         guessed_words_counter[word] += 1
         state_new, reward = game.set_state(word)
-        agent.train_short_memory(state_old, prediction_index, reward, state_new, game.over)
+        agent.train_short_memory(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
+        agent.remember(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
 
         if game.over:
             agent.n_games += 1
@@ -95,14 +104,15 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
             if game.won:
                 recent_wins += 1
                 agent.n_wins += 1
-                agent.remember(state_old, prediction_index, reward, state_new, game.over)
+                winners_counter[game.solution] += 1
             if (agent.n_games % 100) == 0:
-                print("Played: {} Recently won: {}/100 Total win rate: {:.4f} ".format(
+                print("Played: {} Recently won: {}/100 Total win rate: {:.4f}".format(
                     agent.n_games, recent_wins, agent.n_wins/agent.n_games))
                 if recent_wins > max_wins:
                     max_wins = recent_wins
                     agent.model.save()
                 recent_wins = 0
+                total_reward = 0
             random.seed(random_seed)
             game = Wordle(vocab, MAX_ROUNDS, random.choice(vocab))
 
@@ -110,4 +120,4 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
 if __name__ == '__main__':
     train(vocab_subset_len=int(sys.argv[1]) if len(sys.argv) > 1 else None,
           random_seed=int(sys.argv[2]) if len(sys.argv) > 2 else None,
-          saved_model_path="model/model_0390.pth")
+          saved_model_path=None)  # "model/model_0390.pth")

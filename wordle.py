@@ -8,7 +8,7 @@ class Wordle:
         self.max_rounds = max_rounds
         self.round = 0
         self.solution = solution
-        self.state = np.zeros(390)
+        self.state = np.zeros(390, dtype=int)
         self.won = False
         self.over = False
 
@@ -37,7 +37,6 @@ class Wordle:
     def set_state(self, word):
         self.round += 1
         reward = 0
-
         solution_char_count = collections.Counter(self.solution)
         for i, char in enumerate(word):
             position_offset = i * 26 * 3
@@ -47,12 +46,12 @@ class Wordle:
                     # Character is correct at this position
                     # Set "definitely" on this position (and reset "maybe")
                     self.state[position_offset + char_offset:position_offset + char_offset + 3] = [0, 0, 1]
-                    #reward += 2
+                    # reward += 5
                 else:
                     # character exists in solution and has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
-                    #reward += 1
+                    # reward += 1
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists
@@ -73,7 +72,7 @@ class Wordle:
 
         if word == self.solution:
             self.won = True
-            reward += 50
+            reward = 50
             self.over = True
         elif self.round == self.max_rounds:
             reward = -50
