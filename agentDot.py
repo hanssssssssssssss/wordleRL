@@ -8,7 +8,7 @@ from wordle import Wordle
 from modelDot import Linear_QNet, QTrainer
 
 MAX_ROUNDS = 6
-MAX_MEMORY = 100_000
+MAX_MEMORY = 10_000
 BATCH_SIZE = 1000
 LEARNING_RATE = .001
 GAMMA = .9
@@ -23,7 +23,7 @@ class Agent:
         self.action_space_len = len(vocab)
         self.gamma = gamma  # TODO: what is this??
         self.epsilon = epsilon
-        self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
+        self.memory = deque(maxlen=MAX_MEMORY)
         self.model = Linear_QNet(input_size=390,
                                  hidden_size=256,
                                  output_size=130,
@@ -55,9 +55,7 @@ class Agent:
         else:
             state0 = torch.tensor(state, dtype=torch.float)
             predicted_probabilities = self.model(state0)
-            prediction_index = random.choices(range(len(predicted_probabilities)),
-                                              weights=predicted_probabilities)[0]
-            # torch.argmax(predicted_probabilities).item()
+            prediction_index = torch.argmax(predicted_probabilities).item()
         return prediction_index
 
 
@@ -70,7 +68,8 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         random.seed(random_seed)
         vocab = random.sample(vocab, k=vocab_subset_len)
     random.seed(random_seed)
-    solution = random.choice(vocab)
+    #solutions = random.sample(vocab, k=12)
+    solutions = vocab
     guessed_words_counter = Counter(vocab)
     winners_counter = Counter(vocab)
 
@@ -82,7 +81,7 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         sys.exit(0)
     signal.signal(signal.SIGINT, keyboard_interrupt)
 
-    game = Wordle(vocab, MAX_ROUNDS, solution)
+    game = Wordle(vocab, MAX_ROUNDS, random.choice(solutions))
     agent = Agent(gamma=GAMMA,
                   epsilon=EPSILON,
                   vocab=vocab)
@@ -113,9 +112,7 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
                     max_wins = recent_wins
                     agent.model.save()
                 recent_wins = 0
-                total_reward = 0
-            random.seed(random_seed)
-            game = Wordle(vocab, MAX_ROUNDS, random.choice(vocab))
+            game = Wordle(vocab, MAX_ROUNDS, random.choice(solutions))
 
 
 if __name__ == '__main__':

@@ -13,18 +13,17 @@ class Linear_QNet(nn.Module):
             nn.ReLU(),
             nn.Linear(hidden_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, output_size),
-            nn.Softmax(dim=-1),
+            nn.Linear(hidden_size, output_size)
         )
         vocab_one_hot = np.zeros((len(vocab), 130))
         for i, word in enumerate(vocab):
             for j, char in enumerate(word):
                 vocab_one_hot[i, j*26 + (ord(char) - 97)] = 1
-        self.words = torch.Tensor(vocab_one_hot)
+        self.words_one_hot = torch.Tensor(vocab_one_hot)
 
     def forward(self, x):
         y = self.f0(x.float())
-        return torch.tensordot(y, self.words, dims=((-1,), (1,)))
+        return torch.tensordot(y, self.words_one_hot, dims=((-1,), (1,)))
 
     def save(self, file_name='model.pth'):
         model_folder_path = './model'

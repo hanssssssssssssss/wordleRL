@@ -46,12 +46,12 @@ class Wordle:
                     # Character is correct at this position
                     # Set "definitely" on this position (and reset "maybe")
                     self.state[position_offset + char_offset:position_offset + char_offset + 3] = [0, 0, 1]
-                    # reward += 5
+                    reward += 5
                 else:
                     # character exists in solution and has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
-                    # reward += 1
+                    reward += 1
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists
@@ -72,7 +72,7 @@ class Wordle:
 
         if word == self.solution:
             self.won = True
-            reward = 50
+            reward += 50
             self.over = True
         elif self.round == self.max_rounds:
             reward = -50
