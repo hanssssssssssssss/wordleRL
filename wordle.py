@@ -1,7 +1,7 @@
 import collections
 import numpy as np
-
-
+from IPython.display import display
+from IPython.display import HTML as html_print
 class Wordle:
     def __init__(self, vocab, max_rounds, solution):
         self.vocab = vocab
@@ -26,7 +26,6 @@ class Wordle:
                 return
             if len(guess) != 5:
                 print("Word must be 5 characters long")
-            # TODO: check non ASCII chars
             else:
                 if self.guess(guess):
                     self._visualize_state(self.state, guess)
@@ -66,7 +65,7 @@ class Wordle:
                     # Character has been seen more often than it exists
                     # Reset "maybe" on this position to "definitely not"
                     self.state[position_offset + char_offset:
-                              position_offset + char_offset + 3] = [1, 0, 0]
+                               position_offset + char_offset + 3] = [1, 0, 0]
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists
@@ -93,3 +92,20 @@ class Wordle:
             reward = -50
             self.over = True
         return self.state, reward
+
+    def _html_colored(self, text, color="black"):
+        return "<text style=background-color:{};font-size:large>{}</text>".format(color, text)
+
+    def _visualize_state(self, state, word):
+        colors = np.array(["lightgrey", "yellow", "lightgreen"])
+        visual = []
+        for i, char in enumerate(word):
+            position_offset = i * 26 * 3
+            char_offset = (ord(char) - 97) * 3
+            position_state = state[position_offset + char_offset:position_offset + char_offset + 3]
+            if np.array_equal(position_state, np.zeros(3)):
+                color = None
+            else:
+                color = colors[position_state == 1][0]
+            visual.append(self._html_colored(char, color))
+        display(html_print("".join(visual)))
