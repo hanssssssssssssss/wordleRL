@@ -48,7 +48,6 @@ class Wordle:
                     # Character is correct at this position
                     # Set "definitely" on this position (and reset "maybe")
                     self.state[position_offset + char_offset:position_offset + char_offset + 3] = [0, 0, 1]
-                    reward += 5
                     if solution_char_count[char] - seen_char_count[char] == 0:
                         # Character has been seen more often than it exists
                         # Reset last seen maybe to "definitely not"
@@ -63,7 +62,6 @@ class Wordle:
                     # Character has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
-                    reward += 1
                 else:
                     # Character has been seen more often than it exists
                     # Reset "maybe" on this position to "definitely not"
@@ -91,7 +89,7 @@ class Wordle:
             self.won = True
             reward += 50
             self.over = True
-        elif self.round > self.max_rounds:
+        elif self.round == self.max_rounds:
             reward = -50
             self.over = True
         return self.state, reward

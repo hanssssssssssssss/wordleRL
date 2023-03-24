@@ -1,3 +1,9 @@
+LEARNING_RATE = .0001
+GAMMA = .9
+EPSILON = 1000
+WEIGHT_DECAY = .0001
+
+
 Played: 100 Recently won: 8/100 Total win rate: 0.0800
 Played: 200 Recently won: 16/100 Total win rate: 0.1200
 Played: 300 Recently won: 13/100 Total win rate: 0.1233

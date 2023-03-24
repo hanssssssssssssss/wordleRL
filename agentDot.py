@@ -69,9 +69,10 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         vocab = random.sample(vocab, k=vocab_subset_len)
     random.seed(random_seed)
     solutions = random.sample(vocab, k=12)
-    # solutions = vocab
+    #solutions = vocab
     guessed_words_counter = Counter(vocab)
     winners_counter = Counter(vocab)
+    guessed_words_indices = []
 
     def keyboard_interrupt(sig, frame):
         print("Guesses:")
@@ -94,10 +95,16 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         word = vocab[prediction_index]
         guessed_words_counter[word] += 1
         state_new, reward = game.set_state(word)
+        if prediction_index in guessed_words_indices:
+            reward = -100
+        guessed_words_indices.append(prediction_index)
         agent.train_short_memory(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
         agent.remember(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
 
+        #print(word, game.round, game.solution)
+
         if game.over:
+            guessed_words_indices = []
             agent.n_games += 1
             if len(agent.memory) > 0:
                 agent.train_long_memory()

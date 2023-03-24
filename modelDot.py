@@ -15,6 +15,7 @@ class Linear_QNet(nn.Module):
             nn.ReLU(),
             nn.Linear(hidden_size, output_size)
         )
+
         vocab_one_hot = np.zeros((len(vocab), 130))
         for i, word in enumerate(vocab):
             for j, char in enumerate(word):
@@ -67,7 +68,7 @@ class QTrainer:
         target = prediction.clone()
         for i in range(len(done)):
             Q_new = reward[i]
-            if not done:
+            if not done[i]:
                 Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
             target[i][action[i].item()] = Q_new
         self.optimizer.zero_grad()
