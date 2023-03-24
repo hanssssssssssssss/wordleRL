@@ -6,19 +6,25 @@ import torch.optim as optim
 
 
 class Linear_QNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, output_size, vocab):
         super().__init__()
         self.f0 = nn.Sequential(
             nn.Linear(input_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, output_size),
-            nn.Softmax(dim=-1),
+            nn.Linear(hidden_size, output_size)
         )
 
+        vocab_one_hot = np.zeros((len(vocab), 130))
+        for i, word in enumerate(vocab):
+            for j, char in enumerate(word):
+                vocab_one_hot[i, j*26 + (ord(char) - 97)] = 1
+        self.words_one_hot = torch.Tensor(vocab_one_hot)
+
     def forward(self, x):
-        return self.f0(x.float())
+        y = self.f0(x.float())
+        return torch.tensordot(y, self.words_one_hot, dims=((-1,), (1,)))
 
     def save(self, file_name='model.pth'):
         model_folder_path = './model'
@@ -62,7 +68,7 @@ class QTrainer:
         target = prediction.clone()
         for i in range(len(done)):
             Q_new = reward[i]
-            if not done:
+            if not done[i]:
                 Q_new = reward[i] + self.gamma * torch.max(self.model(next_state[i]))
             target[i][action[i].item()] = Q_new
         self.optimizer.zero_grad()
