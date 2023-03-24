@@ -81,7 +81,6 @@ class Wordle:
                         other_positions_offset = n * 26 * 3
                         self.state[other_positions_offset + char_offset:
                                    other_positions_offset + char_offset + 3] = [1, 0, 0]
-
             seen_char_count[char] += 1
 
         if word == self.solution:

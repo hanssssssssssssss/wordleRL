@@ -5,11 +5,11 @@ from pprint import pprint
 from collections import deque, Counter
 import torch
 from wordle import Wordle
-from model   import Linear_QNet, QTrainer
+from model import Linear_QNet, QTrainer
 
 MAX_ROUNDS = 6
-MAX_MEMORY = 10_000
-BATCH_SIZE = 1000
+MAX_MEMORY = 5000
+BATCH_SIZE = 500
 LEARNING_RATE = .001
 GAMMA = .9
 EPSILON = 1000
@@ -24,6 +24,8 @@ class Agent:
         self.gamma = gamma  # TODO: what is this??
         self.epsilon = epsilon
         self.memory = deque(maxlen=MAX_MEMORY)
+        self.winners_memory = deque(maxlen=MAX_MEMORY)
+        self.single_game_memory = deque(maxlen=6)
         self.model = Linear_QNet(input_size=390,
                                  hidden_size=256,
                                  output_size=130,
@@ -36,12 +38,19 @@ class Agent:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
+    def remember_single_game(self, state, action, reward, next_state, done):
+        self.single_game_memory.append((state, action, reward, next_state, done))
+
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
-            mini_sample = random.sample(self.memory, BATCH_SIZE)
+            sample = random.sample(self.memory, BATCH_SIZE)
         else:
-            mini_sample = self.memory
-        states, actions, rewards, next_states, dones = zip(*mini_sample)
+            sample = self.memory
+        if len(self.winners_memory) > BATCH_SIZE:
+            sample.extend(random.sample(self.winners_memory, BATCH_SIZE))
+        else:
+            sample.extend(self.winners_memory)
+        states, actions, rewards, next_states, dones = zip(*sample)
         self.trainer.train_step(states, actions, rewards, next_states, dones)
 
     def train_short_memory(self, state, action, reward, next_state, done):
@@ -95,31 +104,33 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         word = vocab[prediction_index]
         guessed_words_counter[word] += 1
         state_new, reward = game.set_state(word)
-        # if prediction_index in guessed_words_indices:
-        #     reward = -100
+        if prediction_index in guessed_words_indices:
+            reward = -100
         guessed_words_indices.append(prediction_index)
         agent.train_short_memory(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
         agent.remember(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
 
-        #print(word, game.round, game.solution)
+        #print(word, game.round, game.solution, prediction_index, guessed_words_indices, reward)
 
         if game.over:
             guessed_words_indices = []
             agent.n_games += 1
-            if len(agent.memory) > 0:
-                agent.train_long_memory()
             if game.won:
                 recent_wins += 1
                 agent.n_wins += 1
                 winners_counter[game.solution] += 1
+                agent.winners_memory.extend(agent.single_game_memory)
+            if len(agent.memory) > 0:
+                agent.train_long_memory()
             if (agent.n_games % 100) == 0:
                 print("Played: {} Recently won: {}/100 Total win rate: {:.4f}".format(
-                    agent.n_games, recent_wins, agent.n_wins/agent.n_games))
+                    agent.n_games, recent_wins, agent.n_wins / agent.n_games))
                 if recent_wins > max_wins:
                     max_wins = recent_wins
                     agent.model.save()
                 recent_wins = 0
             game = Wordle(vocab, MAX_ROUNDS, random.choice(solutions))
+            agent.single_game_memory.clear()
 
 
 if __name__ == '__main__':
