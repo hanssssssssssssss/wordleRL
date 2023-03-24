@@ -68,8 +68,8 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         random.seed(random_seed)
         vocab = random.sample(vocab, k=vocab_subset_len)
     random.seed(random_seed)
-    #solutions = random.sample(vocab, k=12)
-    solutions = vocab
+    solutions = random.sample(vocab, k=12)
+    # solutions = vocab
     guessed_words_counter = Counter(vocab)
     winners_counter = Counter(vocab)
 

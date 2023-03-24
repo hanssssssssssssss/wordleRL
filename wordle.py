@@ -38,20 +38,37 @@ class Wordle:
         self.round += 1
         reward = 0
         solution_char_count = collections.Counter(self.solution)
+        seen_char_count = collections.Counter()
         for i, char in enumerate(word):
             position_offset = i * 26 * 3
             char_offset = (ord(char) - 97) * 3
             if solution_char_count[char] > 0:
+                # Character exists in solution
                 if word[i] == self.solution[i]:
                     # Character is correct at this position
                     # Set "definitely" on this position (and reset "maybe")
                     self.state[position_offset + char_offset:position_offset + char_offset + 3] = [0, 0, 1]
                     reward += 5
-                else:
-                    # character exists in solution and has been seen less often than it exists
+                    if solution_char_count[char] - seen_char_count[char] == 0:
+                        # Character has been seen more often than it exists
+                        # Reset last seen maybe to "definitely not"
+                        for n in range(i):
+                            prev_position_offset = (i - (n + 1)) * 26 * 3
+                            prev_position_state = self.state[prev_position_offset + char_offset + 1]
+                            if prev_position_state == 1:
+                                self.state[prev_position_offset + char_offset:
+                                           prev_position_offset + char_offset + 3] = [1, 0, 0]
+                                break
+                elif solution_char_count[char] - seen_char_count[char] > 0:
+                    # Character has been seen less often than it exists
                     # Set "maybe" on this position
                     self.state[position_offset + char_offset + 1] = 1
                     reward += 1
+                else:
+                    # Character has been seen more often than it exists
+                    # Reset "maybe" on this position to "definitely not"
+                    self.state[position_offset + char_offset:
+                              position_offset + char_offset + 3] = [1, 0, 0]
             else:
                 if char in self.solution:
                     # character exists in solution but has already been seen as often as it exists
@@ -68,13 +85,13 @@ class Wordle:
                         self.state[other_positions_offset + char_offset:
                                    other_positions_offset + char_offset + 3] = [1, 0, 0]
 
-            solution_char_count[char] -= 1
+            seen_char_count[char] += 1
 
         if word == self.solution:
             self.won = True
             reward += 50
             self.over = True
-        elif self.round == self.max_rounds:
+        elif self.round > self.max_rounds:
             reward = -50
             self.over = True
         return self.state, reward
