@@ -1,0 +1,10 @@
+salty,58423
+rebut,36615
+gumbo,22593
+clamp,21909
+folly,16847
+quill,14964
+wrung,13890
+nerve,9041
+eject,7805
+[all others],71361

@@ -12,8 +12,6 @@ BATCH_SIZE = 1000
 LEARNING_RATE = .001
 GAMMA = .9
 EPSILON = 1000
-WEIGHT_DECAY = .0001
-
 
 class Agent:
     def __init__(self, gamma, epsilon, vocab):
@@ -29,8 +27,7 @@ class Agent:
                                  vocab=vocab)
         self.trainer = QTrainer(self.model,
                                 learning_rate=LEARNING_RATE,
-                                gamma=self.gamma,
-                                decay=WEIGHT_DECAY)
+                                gamma=self.gamma)
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -66,8 +63,8 @@ def train(vocab_subset_len=None, random_seed=None, n_solutions=None, saved_model
     if vocab_subset_len:
         random.seed(random_seed)
         vocab = random.sample(vocab, k=vocab_subset_len)
-    random.seed(random_seed)
     if n_solutions:
+        random.seed(random_seed)
         solutions = random.sample(vocab, k=n_solutions)
     else:
         solutions = vocab
