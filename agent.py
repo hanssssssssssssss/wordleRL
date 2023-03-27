@@ -59,7 +59,7 @@ class Agent:
         return prediction_index
 
 
-def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
+def train(vocab_subset_len=None, random_seed=None, n_solutions=None, saved_model_path=None):
     recent_wins = 0
     max_wins = 0
     with open("data/possible_words.txt") as word_list:
@@ -68,8 +68,10 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
         random.seed(random_seed)
         vocab = random.sample(vocab, k=vocab_subset_len)
     random.seed(random_seed)
-    solutions = random.sample(vocab, k=12)
-    #solutions = vocab
+    if n_solutions:
+        solutions = random.sample(vocab, k=n_solutions)
+    else:
+        solutions = vocab
     guessed_words_counter = Counter(vocab)
     winners_counter = Counter(vocab)
     guessed_words_indices = []
@@ -125,4 +127,5 @@ def train(vocab_subset_len=None, random_seed=None, saved_model_path=None):
 if __name__ == '__main__':
     train(vocab_subset_len=int(sys.argv[1]) if len(sys.argv) > 1 else None,
           random_seed=int(sys.argv[2]) if len(sys.argv) > 2 else None,
-          saved_model_path=None)  # "model/model_0390.pth")
+          n_solutions=int(sys.argv[3]) if len(sys.argv) > 3 else None,
+          saved_model_path=sys.argv[4] if len(sys.argv) > 4 else None)

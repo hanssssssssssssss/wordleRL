@@ -1,146 +1,140 @@
-LEARNING_RATE = .0001
-GAMMA = .9
-EPSILON = 1000
-WEIGHT_DECAY = .0001
-
-
-Played: 100 Recently won: 8/100 Total win rate: 0.0800
-Played: 200 Recently won: 16/100 Total win rate: 0.1200
-Played: 300 Recently won: 13/100 Total win rate: 0.1233
-Played: 400 Recently won: 21/100 Total win rate: 0.1450
-Played: 500 Recently won: 33/100 Total win rate: 0.1820
-Played: 600 Recently won: 51/100 Total win rate: 0.2367
-Played: 700 Recently won: 41/100 Total win rate: 0.2614
-Played: 800 Recently won: 49/100 Total win rate: 0.2900
-Played: 900 Recently won: 55/100 Total win rate: 0.3189
-Played: 1000 Recently won: 58/100 Total win rate: 0.3450
-Played: 1100 Recently won: 55/100 Total win rate: 0.3636
-Played: 1200 Recently won: 48/100 Total win rate: 0.3733
-Played: 1300 Recently won: 54/100 Total win rate: 0.3862
-Played: 1400 Recently won: 68/100 Total win rate: 0.4071
-Played: 1500 Recently won: 57/100 Total win rate: 0.4180
-Played: 1600 Recently won: 57/100 Total win rate: 0.4275
-Played: 1700 Recently won: 63/100 Total win rate: 0.4394
-Played: 1800 Recently won: 64/100 Total win rate: 0.4506
-Played: 1900 Recently won: 65/100 Total win rate: 0.4611
-Played: 2000 Recently won: 68/100 Total win rate: 0.4720
-Played: 2100 Recently won: 64/100 Total win rate: 0.4800
-Played: 2200 Recently won: 69/100 Total win rate: 0.4895
-Played: 2300 Recently won: 73/100 Total win rate: 0.5000
-Played: 2400 Recently won: 68/100 Total win rate: 0.5075
-Played: 2500 Recently won: 63/100 Total win rate: 0.5124
-Played: 2600 Recently won: 65/100 Total win rate: 0.5177
-Played: 2700 Recently won: 74/100 Total win rate: 0.5259
-Played: 2800 Recently won: 63/100 Total win rate: 0.5296
-Played: 2900 Recently won: 76/100 Total win rate: 0.5376
-Played: 3000 Recently won: 63/100 Total win rate: 0.5407
-Played: 3100 Recently won: 71/100 Total win rate: 0.5461
-Played: 3200 Recently won: 66/100 Total win rate: 0.5497
-Played: 3300 Recently won: 70/100 Total win rate: 0.5542
-Played: 3400 Recently won: 69/100 Total win rate: 0.5582
-Played: 3500 Recently won: 72/100 Total win rate: 0.5629
-Played: 3600 Recently won: 73/100 Total win rate: 0.5675
-Played: 3700 Recently won: 80/100 Total win rate: 0.5738
-Played: 3800 Recently won: 60/100 Total win rate: 0.5745
-Played: 3900 Recently won: 68/100 Total win rate: 0.5772
-Played: 4000 Recently won: 61/100 Total win rate: 0.5780
-Played: 4100 Recently won: 67/100 Total win rate: 0.5802
-Played: 4200 Recently won: 67/100 Total win rate: 0.5824
-Played: 4300 Recently won: 75/100 Total win rate: 0.5863
-Played: 4400 Recently won: 79/100 Total win rate: 0.5909
-Played: 4500 Recently won: 85/100 Total win rate: 0.5967
-Played: 4600 Recently won: 79/100 Total win rate: 0.6009
-Played: 4700 Recently won: 83/100 Total win rate: 0.6057
-Played: 4800 Recently won: 72/100 Total win rate: 0.6081
-Played: 4900 Recently won: 78/100 Total win rate: 0.6116
-Played: 5000 Recently won: 72/100 Total win rate: 0.6138
-Played: 5100 Recently won: 72/100 Total win rate: 0.6159
-Played: 5200 Recently won: 72/100 Total win rate: 0.6179
-Played: 5300 Recently won: 74/100 Total win rate: 0.6202
-Played: 5400 Recently won: 75/100 Total win rate: 0.6226
-Played: 5500 Recently won: 64/100 Total win rate: 0.6229
-Played: 5600 Recently won: 75/100 Total win rate: 0.6252
-Played: 5700 Recently won: 80/100 Total win rate: 0.6282
-Played: 5800 Recently won: 79/100 Total win rate: 0.6310
-Played: 5900 Recently won: 76/100 Total win rate: 0.6332
-Played: 6000 Recently won: 75/100 Total win rate: 0.6352
-Played: 6100 Recently won: 71/100 Total win rate: 0.6364
-Played: 6200 Recently won: 73/100 Total win rate: 0.6379
-Played: 6300 Recently won: 75/100 Total win rate: 0.6397
-Played: 6400 Recently won: 82/100 Total win rate: 0.6425
-Played: 6500 Recently won: 82/100 Total win rate: 0.6452
-Played: 6600 Recently won: 80/100 Total win rate: 0.6476
-Played: 6700 Recently won: 83/100 Total win rate: 0.6503
-Played: 6800 Recently won: 83/100 Total win rate: 0.6529
-Played: 6900 Recently won: 80/100 Total win rate: 0.6551
-Played: 7000 Recently won: 81/100 Total win rate: 0.6573
-Played: 7100 Recently won: 87/100 Total win rate: 0.6603
-Played: 7200 Recently won: 87/100 Total win rate: 0.6632
-Played: 7300 Recently won: 81/100 Total win rate: 0.6652
-Played: 7400 Recently won: 83/100 Total win rate: 0.6674
-Played: 7500 Recently won: 82/100 Total win rate: 0.6695
-Played: 7600 Recently won: 81/100 Total win rate: 0.6713
-Played: 7700 Recently won: 85/100 Total win rate: 0.6736
-Played: 7800 Recently won: 81/100 Total win rate: 0.6754
-Played: 7900 Recently won: 84/100 Total win rate: 0.6775
-Played: 8000 Recently won: 85/100 Total win rate: 0.6796
-Played: 8100 Recently won: 91/100 Total win rate: 0.6825
-Played: 8200 Recently won: 93/100 Total win rate: 0.6855
-Played: 8300 Recently won: 90/100 Total win rate: 0.6881
-Played: 8400 Recently won: 91/100 Total win rate: 0.6907
-Played: 8500 Recently won: 96/100 Total win rate: 0.6939
-Played: 8600 Recently won: 94/100 Total win rate: 0.6967
-Played: 8700 Recently won: 90/100 Total win rate: 0.6991
-Played: 8800 Recently won: 90/100 Total win rate: 0.7014
-Played: 8900 Recently won: 95/100 Total win rate: 0.7042
-Played: 9000 Recently won: 88/100 Total win rate: 0.7061
-Played: 9100 Recently won: 89/100 Total win rate: 0.7081
-Played: 9200 Recently won: 90/100 Total win rate: 0.7102
-Played: 9300 Recently won: 92/100 Total win rate: 0.7125
-Played: 9400 Recently won: 97/100 Total win rate: 0.7152
-Played: 9500 Recently won: 96/100 Total win rate: 0.7178
-Played: 9600 Recently won: 88/100 Total win rate: 0.7195
-Played: 9700 Recently won: 87/100 Total win rate: 0.7210
-Played: 9800 Recently won: 94/100 Total win rate: 0.7233
-Played: 9900 Recently won: 94/100 Total win rate: 0.7255
-Played: 10000 Recently won: 91/100 Total win rate: 0.7273
-Played: 10100 Recently won: 91/100 Total win rate: 0.7291
-Played: 10200 Recently won: 95/100 Total win rate: 0.7313
-Played: 10300 Recently won: 91/100 Total win rate: 0.7330
-Played: 10400 Recently won: 94/100 Total win rate: 0.7350
-Played: 10500 Recently won: 95/100 Total win rate: 0.7370
-Played: 10600 Recently won: 92/100 Total win rate: 0.7388
-Played: 10700 Recently won: 92/100 Total win rate: 0.7405
-Played: 10800 Recently won: 94/100 Total win rate: 0.7423
-Played: 10900 Recently won: 92/100 Total win rate: 0.7439
-Played: 11000 Recently won: 93/100 Total win rate: 0.7456
-Played: 11100 Recently won: 93/100 Total win rate: 0.7473
-Played: 11200 Recently won: 89/100 Total win rate: 0.7486
-Played: 11300 Recently won: 91/100 Total win rate: 0.7500
-Played: 11400 Recently won: 88/100 Total win rate: 0.7511
-Played: 11500 Recently won: 89/100 Total win rate: 0.7523
-Played: 11600 Recently won: 91/100 Total win rate: 0.7537
-Played: 11700 Recently won: 86/100 Total win rate: 0.7546
-Played: 11800 Recently won: 87/100 Total win rate: 0.7556
-Played: 11900 Recently won: 95/100 Total win rate: 0.7572
-Played: 12000 Recently won: 86/100 Total win rate: 0.7581
-Played: 12100 Recently won: 92/100 Total win rate: 0.7594
-Played: 12200 Recently won: 90/100 Total win rate: 0.7606
-Played: 12300 Recently won: 94/100 Total win rate: 0.7620
-Played: 12400 Recently won: 96/100 Total win rate: 0.7636
-Played: 12500 Recently won: 92/100 Total win rate: 0.7649
-Played: 12600 Recently won: 91/100 Total win rate: 0.7660
-Played: 12700 Recently won: 92/100 Total win rate: 0.7672
-Played: 12800 Recently won: 95/100 Total win rate: 0.7687
-Played: 12900 Recently won: 95/100 Total win rate: 0.7701
-Played: 13000 Recently won: 93/100 Total win rate: 0.7713
-Played: 13100 Recently won: 94/100 Total win rate: 0.7726
-Played: 13200 Recently won: 89/100 Total win rate: 0.7735
-Played: 13300 Recently won: 91/100 Total win rate: 0.7745
-Played: 13400 Recently won: 94/100 Total win rate: 0.7757
-Played: 13500 Recently won: 93/100 Total win rate: 0.7769
-Played: 13600 Recently won: 88/100 Total win rate: 0.7776
-Played: 13700 Recently won: 95/100 Total win rate: 0.7789
-Played: 13800 Recently won: 94/100 Total win rate: 0.7801
-Played: 13900 Recently won: 93/100 Total win rate: 0.7812
-Played: 14000 Recently won: 89/100 Total win rate: 0.7819
+100,8,0.0800
+200,16,0.1200
+300,13,0.1233
+400,21,0.1450
+500,33,0.1820
+600,51,0.2367
+700,41,0.2614
+800,49,0.2900
+900,55,0.3189
+1000,58,0.3450
+1100,55,0.3636
+1200,48,0.3733
+1300,54,0.3862
+1400,68,0.4071
+1500,57,0.4180
+1600,57,0.4275
+1700,63,0.4394
+1800,64,0.4506
+1900,65,0.4611
+2000,68,0.4720
+2100,64,0.4800
+2200,69,0.4895
+2300,73,0.5000
+2400,68,0.5075
+2500,63,0.5124
+2600,65,0.5177
+2700,74,0.5259
+2800,63,0.5296
+2900,76,0.5376
+3000,63,0.5407
+3100,71,0.5461
+3200,66,0.5497
+3300,70,0.5542
+3400,69,0.5582
+3500,72,0.5629
+3600,73,0.5675
+3700,80,0.5738
+3800,60,0.5745
+3900,68,0.5772
+4000,61,0.5780
+4100,67,0.5802
+4200,67,0.5824
+4300,75,0.5863
+4400,79,0.5909
+4500,85,0.5967
+4600,79,0.6009
+4700,83,0.6057
+4800,72,0.6081
+4900,78,0.6116
+5000,72,0.6138
+5100,72,0.6159
+5200,72,0.6179
+5300,74,0.6202
+5400,75,0.6226
+5500,64,0.6229
+5600,75,0.6252
+5700,80,0.6282
+5800,79,0.6310
+5900,76,0.6332
+6000,75,0.6352
+6100,71,0.6364
+6200,73,0.6379
+6300,75,0.6397
+6400,82,0.6425
+6500,82,0.6452
+6600,80,0.6476
+6700,83,0.6503
+6800,83,0.6529
+6900,80,0.6551
+7000,81,0.6573
+7100,87,0.6603
+7200,87,0.6632
+7300,81,0.6652
+7400,83,0.6674
+7500,82,0.6695
+7600,81,0.6713
+7700,85,0.6736
+7800,81,0.6754
+7900,84,0.6775
+8000,85,0.6796
+8100,91,0.6825
+8200,93,0.6855
+8300,90,0.6881
+8400,91,0.6907
+8500,96,0.6939
+8600,94,0.6967
+8700,90,0.6991
+8800,90,0.7014
+8900,95,0.7042
+9000,88,0.7061
+9100,89,0.7081
+9200,90,0.7102
+9300,92,0.7125
+9400,97,0.7152
+9500,96,0.7178
+9600,88,0.7195
+9700,87,0.7210
+9800,94,0.7233
+9900,94,0.7255
+10000,91,0.7273
+10100,91,0.7291
+10200,95,0.7313
+10300,91,0.7330
+10400,94,0.7350
+10500,95,0.7370
+10600,92,0.7388
+10700,92,0.7405
+10800,94,0.7423
+10900,92,0.7439
+11000,93,0.7456
+11100,93,0.7473
+11200,89,0.7486
+11300,91,0.7500
+11400,88,0.7511
+11500,89,0.7523
+11600,91,0.7537
+11700,86,0.7546
+11800,87,0.7556
+11900,95,0.7572
+12000,86,0.7581
+12100,92,0.7594
+12200,90,0.7606
+12300,94,0.7620
+12400,96,0.7636
+12500,92,0.7649
+12600,91,0.7660
+12700,92,0.7672
+12800,95,0.7687
+12900,95,0.7701
+13000,93,0.7713
+13100,94,0.7726
+13200,89,0.7735
+13300,91,0.7745
+13400,94,0.7757
+13500,93,0.7769
+13600,88,0.7776
+13700,95,0.7789
+13800,94,0.7801
+13900,93,0.7812
+14000,89,0.7819
