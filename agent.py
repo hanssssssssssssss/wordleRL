@@ -5,9 +5,8 @@ from pprint import pprint
 from collections import deque, Counter
 import torch
 from wordle import Wordle
-from model   import Linear_QNet, QTrainer
+from model import Linear_QNet, QTrainer
 
-MAX_ROUNDS = 6
 MAX_MEMORY = 10_000
 BATCH_SIZE = 1000
 LEARNING_RATE = .001
@@ -84,7 +83,7 @@ def train(vocab_subset_len=None, random_seed=None, n_solutions=None, saved_model
         sys.exit(0)
     signal.signal(signal.SIGINT, keyboard_interrupt)
 
-    game = Wordle(vocab, MAX_ROUNDS, random.choice(solutions))
+    game = Wordle(vocab, random.choice(solutions))
     agent = Agent(gamma=GAMMA,
                   epsilon=EPSILON,
                   vocab=vocab)
@@ -97,13 +96,9 @@ def train(vocab_subset_len=None, random_seed=None, n_solutions=None, saved_model
         word = vocab[prediction_index]
         guessed_words_counter[word] += 1
         state_new, reward = game.set_state(word)
-        # if prediction_index in guessed_words_indices:
-        #     reward = -100
         guessed_words_indices.append(prediction_index)
         agent.train_short_memory(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
         agent.remember(state_old.copy(), prediction_index, reward, state_new.copy(), game.over)
-
-        #print(word, game.round, game.solution)
 
         if game.over:
             guessed_words_indices = []
@@ -121,7 +116,7 @@ def train(vocab_subset_len=None, random_seed=None, n_solutions=None, saved_model
                     max_wins = recent_wins
                     agent.model.save()
                 recent_wins = 0
-            game = Wordle(vocab, MAX_ROUNDS, random.choice(solutions))
+            game = Wordle(vocab, random.choice(solutions))
 
 
 if __name__ == '__main__':

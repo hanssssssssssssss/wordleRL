@@ -2,10 +2,12 @@ import collections
 import numpy as np
 from IPython.display import display
 from IPython.display import HTML as html_print
+
+
 class Wordle:
-    def __init__(self, vocab, max_rounds, solution):
+    def __init__(self, vocab, solution):
         self.vocab = vocab
-        self.max_rounds = max_rounds
+        self.max_rounds = 6
         self.round = 0
         self.solution = solution
         self.state = np.zeros(390, dtype=int)
@@ -19,11 +21,14 @@ class Wordle:
             self.set_state(word.lower())
             return True
 
-    def play_visual(self):
-        while True:
-            guess = input()
-            if guess == "q":
-                return
+    def play_visual(self, word=None):
+        next_round = True
+        while next_round:
+            guess = word
+            if not guess:
+                guess = input()
+                if guess == "q":
+                    return
             if len(guess) != 5:
                 print("Word must be 5 characters long")
             else:
@@ -32,6 +37,8 @@ class Wordle:
                 if self.over:
                     print("Game over, you ", "won!" if self.won else "lost!")
                     return
+            if word:
+                next_round = False
 
     def set_state(self, word):
         self.round += 1
