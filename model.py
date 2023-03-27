@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 
-class Linear_QNet(nn.Module):
+class   Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, vocab):
         super().__init__()
         self.f0 = nn.Sequential(
@@ -39,7 +39,7 @@ class Linear_QNet(nn.Module):
 
 
 class QTrainer:
-    def __init__(self, model, learning_rate, gamma, decay):
+    def __init__(self, model, learning_rate, gamma):
         self.learning_rate = learning_rate
         self.gamma = gamma
         self.model = model
