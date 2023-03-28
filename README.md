@@ -164,7 +164,7 @@ stats_plotter(["stats/v100s20.txt", "stats/v100s20lr0001.txt"], ["LR = 0.001", "
 
 
     
-![png](wordleRL_files/wordleRL_21_0.png)
+![png](readme_files/wordleRL_21_0.png)
     
 
 
@@ -177,7 +177,7 @@ stats_plotter(["stats/v100.txt"])
 
 
     
-![png](wordleRL_files/wordleRL_23_0.png)
+![png](readme_files/wordleRL_23_0.png)
     
 
 
@@ -199,7 +199,7 @@ plt.show()
 
 
     
-![png](wordleRL_files/wordleRL_25_0.png)
+![png](readme_files/wordleRL_25_0.png)
     
 
 
