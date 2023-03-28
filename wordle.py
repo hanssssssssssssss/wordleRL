@@ -92,10 +92,10 @@ class Wordle:
 
         if word == self.solution:
             self.won = True
-            reward = 10
+            reward = 50
             self.over = True
         elif self.round == self.max_rounds:
-            reward = -10
+            reward = -50
             self.over = True
         return self.state, reward
 

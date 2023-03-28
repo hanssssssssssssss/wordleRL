@@ -106,8 +106,8 @@ The idea behind Deep Q-Learning is to expand the single-step online updating of 
 
 ### Reward:
 Balanced reward/cost for winnig and loosing:
-+ $- 10$ for a lost game
-+ $+ 10$ for a win
++ $- 50$ for a lost game
++ $+ 50$ for a win
 
 # 4. The Model
 
