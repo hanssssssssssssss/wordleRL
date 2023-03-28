@@ -10,7 +10,7 @@ from model import Linear_QNet, QTrainer
 MAX_MEMORY = 10_000
 BATCH_SIZE = 1000
 LEARNING_RATE = .001
-GAMMA = .8
+GAMMA = .9
 EPSILON = 1000
 
 class Agent:
